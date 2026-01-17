@@ -54,7 +54,7 @@ def analyze_transcript():
     # )
 
     llm = ChatGroq(
-        model="openai/gpt-oss-120b",
+        model="openai/gpt-oss-20b",
         temperature=0,
         max_tokens=None,
         reasoning_format="parsed",
@@ -102,8 +102,58 @@ def analyze_transcript():
             {chunk}
         """
         
+        prompt2= f"""### Task
+            Identify the most viral clips which would do well on short form content platforms. :
+            - Focus on quality(like 2 clips) and not quantity.
+            - Humorous moments  
+            - Offensive or edgy jokes  
+            - Awkward silence, laughter, or reactions that would be visually funny in subtitles  
+
+            ### Critical Rules
+            1. **Completedness**: Every clip MUST hold the entire context of the joke/funny moment within one clip such that it doesn't leak into the next clip.
+            2. **Context Grounding**: Use ONLY the provided transcript.  
+            Do NOT invent or reference external information.
+            3. **No Duplicates**: Each clip must have unique start and end timestamps.
+            4. **Duration Lower Limit**:15 seconds
+            5. **Duration Upper Limit**:70 seconds
+            4. **Calculated Math**: Ensure (clip_end - clip_start) adheres to the Duration Lower Limit and the Duration Upper Limit witholding all context with all sorts of time ranges in different clips
+            5. **Strict Format**:  
+            Return ONLY the JSON.  
+            NO preamble, NO explanations, NO extra text.  
+            The response MUST start with `[` and end with `]`.
+
+            ### Humor-Focused Viral Selection Rubric
+            Prioritize moments containing:
+            - **Edgy or offensive jokes** (dark humor, roasting, shock value)  
+            - **Unexpected or awkward silence**  
+            - **Laughter, reactions, or pauses** that imply visual comedy  
+            - **Absurd or ridiculous statements**  
+            - **High-contrast moments** (serious tone → sudden joke)
+
+            Each selected clip should include:
+            - A clear **comedic hook**
+            - A **surprise or uncomfortable pivot**
+            - A **funny or shocking peak**
+
+            ### Response Format
+            Return ONLY a JSON list:
+
+            [
+            {{
+            "clip_start": 0.00,
+            "clip_end": 0.00,
+            "duration": 0.00,
+            "viral_type": "Humor/Offensive/Awkward",
+            "reasoning": "Under 15 words explaining why it's funny or shocking",
+            "transcript_quote": "The first sentence of the clip"
+            }}
+            ]
+
+            ### Transcript Data
+            {chunk}
+        """
         try:
-            response = llm.invoke(prompt)
+            response = llm.invoke(prompt2)
             # Parse the string content back into a list
             print(response.content)
             clips = json.loads(response.content)  # type: ignore

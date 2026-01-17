@@ -8,9 +8,11 @@ from transcript_analyzer import analyze_transcript
 # level 16 xbow is terrifying - Ken
 # https://www.youtube.com/watch?v=1YZDN5ANsJs
 
+#Sidemen Silent Library
+# https://www.youtube.com/watch?v=G9b7clmSd4g
+
 def main():
-    # video_id = "1YZDN5ANsJs"
-    video_id = "Qq_EZZxmdyw"
+    video_id = "G9b7clmSd4g"
     generate_transcript(video_id)
     analyze_transcript()
 
